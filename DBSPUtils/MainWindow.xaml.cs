@@ -386,7 +386,9 @@ namespace DBSPUtils
         }
         private void cleanUp()
         {
+            tConsole("Running Clean Up");
             if (Directory.Exists("temp")) Directory.Delete("temp", true);
+            tConsole("Clean Up successful");
         }
 
         private void _commandConstructor(bool refresh = true)
@@ -394,11 +396,6 @@ namespace DBSPUtils
             char_panel.IsEnabled = false;
             map_panel.IsEnabled = false;
             opt_panel.IsEnabled = false;
-            //set SGPlayerReplicationInfo m_SlotArcheTypes CovertOps_01_Gameplay.Pawns.A_CovertOps_01
-            //Primary: Set SGPawn PrimaryWeapons (A_xxxx)
-            //Secondary: Set SGPawn SecondaryWeapons (A_xxxx)
-            //Melee: Set SGPawn Meleeweapons (A_xxxx)
-            //Item: Set SGPawn Items (A_xxxx)
 
             Dictionary<string, string> cmds = new Dictionary<string, string>();
 
@@ -409,9 +406,11 @@ namespace DBSPUtils
             bool setMeele = false;
             bool setItem = false;
             bool setMap = false;
+            bool setInfHP = false;
             if (refresh)
             {
                 if ((bool)sui_com.IsChecked) suicide = true;
+                if ((bool)hp_chk.IsChecked) setInfHP = true;
                 if (Maps.SelectedIndex != 0 && Maps.SelectedIndex != -1) setMap = true;
                 if (Characters.SelectedIndex != 0 && Characters.SelectedIndex != -1) setChar = true;
                 if (Primary.SelectedIndex != 0 && Primary.SelectedIndex != -1) setPrimary = true;
@@ -420,6 +419,7 @@ namespace DBSPUtils
                 if (ItemCB.SelectedIndex != 0 && ItemCB.SelectedIndex != -1) setItem = true;
 
                 if (setMap) cmds.Add("fullcommand", "SwitchLevel " + Maps.SelectedItem);
+                else if (setInfHP) cmds.Add("fullcommand", "set SGPawn Health 9999999 | set SGPawn HealthMax 9999999");
                 else
                 {
                     if (setChar)
@@ -541,6 +541,16 @@ namespace DBSPUtils
                 tConsole(ex.Message);
                 tConsole(ex.StackTrace);
             }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            cleanUp();
+        }
+
+        private void hp_chk_Click(object sender, RoutedEventArgs e)
+        {
+            _commandConstructor();
         }
     }
 }
