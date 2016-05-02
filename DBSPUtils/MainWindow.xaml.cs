@@ -73,44 +73,47 @@ namespace DBSPUtils
             {
                 commandBuilder.Text = "Checking Requires Files...";
             }));
-            string filepath = Directory.GetCurrentDirectory() + "\\extract.exe";
-            tConsole("Checking if required files are present");
-            if (!File.Exists(filepath))
+            if (!Properties.Settings.Default.quick_launch)
             {
-                try
+                string filepath = Directory.GetCurrentDirectory() + "\\extract.exe";
+                tConsole("Checking if required files are present");
+                if (!File.Exists(filepath))
                 {
-                    tConsole("'extract.exe' not found");
-                    Assembly assm = Assembly.GetCallingAssembly();
-                    tConsole("Getting 'extract.exe' from resources");
-                    using (Stream s = assm.GetManifestResourceStream("DBSPUtils.extract.exe"))
-                    using (BinaryReader r = new BinaryReader(s))
-                    using (FileStream fs = new FileStream(filepath, FileMode.CreateNew))
-                    using (BinaryWriter w = new BinaryWriter(fs))
-                        w.Write(r.ReadBytes((int)s.Length));
-                    tConsole("Retreival of 'extract.exe' successful");
+                    try
+                    {
+                        tConsole("'extract.exe' not found");
+                        Assembly assm = Assembly.GetCallingAssembly();
+                        tConsole("Getting 'extract.exe' from resources");
+                        using (Stream s = assm.GetManifestResourceStream("DBSPUtils.extract.exe"))
+                        using (BinaryReader r = new BinaryReader(s))
+                        using (FileStream fs = new FileStream(filepath, FileMode.CreateNew))
+                        using (BinaryWriter w = new BinaryWriter(fs))
+                            w.Write(r.ReadBytes((int)s.Length));
+                        tConsole("Retreival of 'extract.exe' successful");
+                    }
+                    catch (Exception ex)
+                    {
+                        tConsole("Retreival of 'extract.exe' failed. Please send the following line to a developer for assistance");
+                        tConsole(ex.InnerException.ToString());
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    tConsole("Retreival of 'extract.exe' failed. Please send the following line to a developer for assistance");
-                    tConsole(ex.InnerException.ToString());
+                    tConsole("All required files are present");
                 }
-            }
-            else
-            {
-                tConsole("All required files are present");
             }
         }
         private bool findDBFiles()
         {
             Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
             {
-                commandBuilder.Text = "Looking for Steam/Dirty Bomb";
+                commandBuilder.Text = "Looking for Steam/Dirty Bomb files";
             }));
             //We will check on start up each time incase the files get moved to another hard drive or folder location
             //Can change using settings in app
             var sp = Properties.Settings.Default.steam_path;
-            tConsole("Testing for Steam folder");
-            if (Directory.Exists(sp))
+            tConsole("Testing for Steam folder. Looking for 'SteamApps\\common'");
+            if (Directory.Exists(sp + @"\SteamApps\common"))
             {
                 tConsole("Steam folder found. Testing for Dirty Bomb files");
                 //Test using Engineer_01 because I am biased
