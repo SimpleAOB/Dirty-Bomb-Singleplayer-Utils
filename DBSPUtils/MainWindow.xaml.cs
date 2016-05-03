@@ -30,6 +30,8 @@ namespace DBSPUtils
         {
             InitializeComponent();
         }
+        public bool launching = true;
+        private bool SCDialogOpen = false;
         private String consoleLastMsg = "";
         private Dictionary<int, string> classes = new Dictionary<int, string>();
 
@@ -462,6 +464,7 @@ namespace DBSPUtils
                 Characters.SelectedIndex = 0;
                 Maps.SelectedIndex = 0;
                 Primary.SelectedIndex = 0;
+                launching = false;
             }));
         }
         private void taskController()
@@ -494,42 +497,34 @@ namespace DBSPUtils
             bool setSecondary = false;
             bool setMeele = false;
             bool setItem = false;
-            bool setMap = false;
-            bool setInfHP = false;
+
             if (refresh)
             {
                 if ((bool)sui_com.IsChecked) suicide = true;
-                if ((bool)hp_chk.IsChecked) setInfHP = true;
-                if (Maps.SelectedIndex != 0 && Maps.SelectedIndex != -1) setMap = true;
                 if (Characters.SelectedIndex != 0 && Characters.SelectedIndex != -1) setChar = true;
                 if (Primary.SelectedIndex != 0 && Primary.SelectedIndex != -1) setPrimary = true;
                 if (Secondary.SelectedIndex != 0 && Secondary.SelectedIndex != -1) setSecondary = true;
                 if (Meele.SelectedIndex != 0 && Meele.SelectedIndex != -1) setMeele = true;
                 if (ItemCB.SelectedIndex != 0 && ItemCB.SelectedIndex != -1) setItem = true;
 
-                if (setMap) cmds.Add("fullcommand", "SwitchLevel " + Maps.SelectedItem);
-                else if (setInfHP) cmds.Add("fullcommand", "set SGPawn Health 9999999 | set SGPawn HealthMax 9999999 | set SGPlayerSetCooldown m_AbilityCoolDowns (m_autorate=10) | set SGCooldownComponent m_energycost (0)");
-                else
+                if (setChar)
                 {
-                    if (setChar)
-                    {
-                        string chrName = Characters.SelectedItem.ToString();
-                        string chrFile = map_classes[chrName];
-                        cmds.Add("charcmd", "set SGPlayerReplicationInfo m_SlotArcheTypes "+ chrFile +"_Gameplay.Pawns.A_"+chrFile);
-                    } else cmds.Add("charcmd", "noset");
+                    string chrName = Characters.SelectedItem.ToString();
+                    string chrFile = map_classes[chrName];
+                    cmds.Add("charcmd", "set SGPlayerReplicationInfo m_SlotArcheTypes "+ chrFile +"_Gameplay.Pawns.A_"+chrFile);
+                } else cmds.Add("charcmd", "noset");
 
-                    cmds.Add("primarycmd", setPrimary == true ? "set SGPawn PrimaryWeapons (A_" + Primary.SelectedItem + ")" : "noset");
-                    cmds.Add("secondarycmd", setSecondary == true ? "set SGPawn SecondaryWeapons (A_" + Secondary.SelectedItem + ")" : "noset");
-                    cmds.Add("meelecmd", setMeele == true ? "set SGPawn MeleeWeapons (A_" + Meele.SelectedItem + ")" : "noset");
-                    cmds.Add("itemcmd", setItem == true ? "set SGPawn Items (A_" + ItemCB.SelectedItem + ")" : "noset");
+                cmds.Add("primarycmd", setPrimary == true ? "set SGPawn PrimaryWeapons (A_" + Primary.SelectedItem + ")" : "noset");
+                cmds.Add("secondarycmd", setSecondary == true ? "set SGPawn SecondaryWeapons (A_" + Secondary.SelectedItem + ")" : "noset");
+                cmds.Add("meelecmd", setMeele == true ? "set SGPawn MeleeWeapons (A_" + Meele.SelectedItem + ")" : "noset");
+                cmds.Add("itemcmd", setItem == true ? "set SGPawn Items (A_" + ItemCB.SelectedItem + ")" : "noset");
 
-                    //Build fullcommand
-                    string fc = "";
-                    //One-liner for maximum unreadability
-                    foreach (KeyValuePair<string, string> ent in cmds) if (ent.Value != "noset") if (fc != "") fc += " | " + ent.Value; else fc = ent.Value;
-                    if (suicide && fc != "") fc += " | Kill";
-                    cmds["fullcommand"] = fc;
-                }
+                //Build fullcommand
+                string fc = "";
+                //One-liner for maximum unreadability
+                foreach (KeyValuePair<string, string> ent in cmds) if (ent.Value != "noset") if (fc != "") fc += " | " + ent.Value; else fc = ent.Value;
+                if (suicide && fc != "") fc += " | Kill";
+                cmds["fullcommand"] = fc;
                 commandBuilder.Text = cmds["fullcommand"];
             }
 
@@ -578,7 +573,21 @@ namespace DBSPUtils
 
         private void SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            _commandConstructor();
+            if (!launching && !SCDialogOpen && ((ComboBox)sender).Name == "Maps")
+            {
+                SingleCommand diag = new SingleCommand();
+                diag.setCommand("SwitchLevel " + Maps.SelectedItem);
+                diag.ShowDialog();
+                tConsole("Command Coppied");
+                diag = null;
+                SCDialogOpen = true;
+                Maps.SelectedIndex = 0;
+                SCDialogOpen = false;
+            }
+            else
+            {
+                _commandConstructor();
+            }
         }
 
         private void SelectionChanged_Check(object sender, RoutedEventArgs e)
@@ -637,9 +646,13 @@ namespace DBSPUtils
             cleanUp();
         }
 
-        private void hp_chk_Click(object sender, RoutedEventArgs e)
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            _commandConstructor();
+            SingleCommand diag = new SingleCommand();
+            diag.setCommand("set SGPawn Health 9999999 | set SGPawn HealthMax 9999999 | set SGPlayerSetCooldown m_AbilityCoolDowns (m_autorate=10) | set SGCooldownComponent m_energycost (0)");
+            diag.ShowDialog();
+            tConsole("Command Coppied");
+            diag = null;
         }
     }
 }

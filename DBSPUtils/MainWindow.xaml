@@ -16,13 +16,38 @@
                     <Label Content="Meele" HorizontalAlignment="Left" Margin="331,72,0,0" VerticalAlignment="Top"/>
                     <ComboBox x:Name="ItemCB" HorizontalAlignment="Left" Margin="379,105,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="SelectionChanged"/>
                     <Label Content="Item" HorizontalAlignment="Left" Margin="331,101,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="hp_chk" Content="Infinite Health/Ammo" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top" Click="hp_chk_Click" ToolTip="This command can only be used while already deployed"/>
+                    <Button Content="Infinite Health/Ammo" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" Width="167" Click="Button_Click"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Maps">
                 <Grid x:Name="map_panel" Background="#FFE5E5E5" IsEnabled="False">
                     <ComboBox x:Name="Maps" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" SelectionChanged="SelectionChanged" Margin="53,14,0,0"/>
                     <Label Content="Map" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <ListBox x:Name="tp_cmd" HorizontalAlignment="Left" Height="117" Margin="332,10,0,0" VerticalAlignment="Top" Width="167">
+                        <ListBoxItem FontStyle="Italic" FontWeight="Bold">Bridge----------------</ListBoxItem>
+                        <ListBoxItem>First Street</ListBoxItem>
+                        <ListBoxItem>Last Delivery Point</ListBoxItem>
+                        <ListBoxItem FontStyle="Italic" FontWeight="Bold">Chapel----------------</ListBoxItem>
+                        <ListBoxItem>First EV</ListBoxItem>
+                        <ListBoxItem>First Under Bridge</ListBoxItem>
+                        <ListBoxItem>First left Balcony</ListBoxItem>
+                        <ListBoxItem>Red House/Double House</ListBoxItem>
+                        <ListBoxItem>Second Left Route</ListBoxItem>
+                        <ListBoxItem>Last Attacker Spawn</ListBoxItem>
+                        <ListBoxItem FontStyle="Italic" FontWeight="Bold">Underground---------</ListBoxItem>
+                        <ListBoxItem>First Bomb Plant Turret</ListBoxItem>
+                        <ListBoxItem>First Bomb Plant Lazer</ListBoxItem>
+                        <ListBoxItem>First Attacker Tubes</ListBoxItem>
+                        <ListBoxItem>Last Bomb Plant</ListBoxItem>
+                        <ListBoxItem>Last Attacker Spawn</ListBoxItem>
+                        <ListBoxItem>Last Defender Spawn</ListBoxItem>
+                        <ListBoxItem FontStyle="Italic" FontWeight="Bold">Trainyard-------------</ListBoxItem>
+                        <ListBoxItem>Train Tracks</ListBoxItem>
+                        <ListBoxItem>Last Defender Bridge</ListBoxItem>
+                        <ListBoxItem FontStyle="Italic" FontWeight="Bold">Terminal-------------</ListBoxItem>
+                        <ListBoxItem>First Bomb Plant</ListBoxItem>
+                    </ListBox>
+                    <Label Content="Teleport" HorizontalAlignment="Left" Margin="273,10,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Options">
