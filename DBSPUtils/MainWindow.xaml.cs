@@ -513,11 +513,21 @@ namespace DBSPUtils
                     string chrFile = map_classes[chrName];
                     cmds.Add("charcmd", "set SGPlayerReplicationInfo m_SlotArcheTypes "+ chrFile +"_Gameplay.Pawns.A_"+chrFile);
                 } else cmds.Add("charcmd", "noset");
-
-                cmds.Add("primarycmd", setPrimary == true ? "set SGPawn PrimaryWeapons (A_" + Primary.SelectedItem + ")" : "noset");
-                cmds.Add("secondarycmd", setSecondary == true ? "set SGPawn SecondaryWeapons (A_" + Secondary.SelectedItem + ")" : "noset");
-                cmds.Add("meelecmd", setMeele == true ? "set SGPawn MeleeWeapons (A_" + Meele.SelectedItem + ")" : "noset");
-                cmds.Add("itemcmd", setItem == true ? "set SGPawn Items (A_" + ItemCB.SelectedItem + ")" : "noset");
+                if (!Properties.Settings.Default.quick_launch && !launching)
+                {
+                    //map_weapons.FirstOrDefault(x => x.Value == Primary.SelectedItem.ToString()).Key
+                    cmds.Add("primarycmd", setPrimary == true ? "set SGPawn PrimaryWeapons (A_" + map_weapons.FirstOrDefault(x => x.Value == Primary.SelectedItem.ToString()).Key + ")" : "noset");
+                    cmds.Add("secondarycmd", setSecondary == true ? "set SGPawn SecondaryWeapons (A_" + map_weapons.FirstOrDefault(x => x.Value == Secondary.SelectedItem.ToString()).Key + ")" : "noset");
+                    cmds.Add("meelecmd", setMeele == true ? "set SGPawn MeleeWeapons (A_" + map_weapons.FirstOrDefault(x => x.Value == Meele.SelectedItem.ToString()).Key + ")" : "noset");
+                    cmds.Add("itemcmd", setItem == true ? "set SGPawn Items (A_" + map_weapons.FirstOrDefault(x => x.Value == ItemCB.SelectedItem.ToString()).Key + ")" : "noset");
+                }
+                else
+                {
+                    cmds.Add("primarycmd", setPrimary == true ? "set SGPawn PrimaryWeapons (A_" + Primary.SelectedItem + ")" : "noset");
+                    cmds.Add("secondarycmd", setSecondary == true ? "set SGPawn SecondaryWeapons (A_" + Secondary.SelectedItem + ")" : "noset");
+                    cmds.Add("meelecmd", setMeele == true ? "set SGPawn MeleeWeapons (A_" + Meele.SelectedItem + ")" : "noset");
+                    cmds.Add("itemcmd", setItem == true ? "set SGPawn Items (A_" + ItemCB.SelectedItem + ")" : "noset");
+                }
 
                 //Build fullcommand
                 string fc = "";
