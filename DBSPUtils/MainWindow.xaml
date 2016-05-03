@@ -23,7 +23,7 @@
                 <Grid x:Name="map_panel" Background="#FFE5E5E5" IsEnabled="False">
                     <ComboBox x:Name="Maps" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" SelectionChanged="SelectionChanged" Margin="53,14,0,0"/>
                     <Label Content="Map" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-                    <ListBox x:Name="tp_cmd" HorizontalAlignment="Left" Height="117" Margin="332,10,0,0" VerticalAlignment="Top" Width="167">
+                    <ListBox x:Name="tp_cmd" HorizontalAlignment="Left" Height="117" Margin="332,10,0,0" VerticalAlignment="Top" Width="167" SelectionChanged="SelectionChanged">
                         <ListBoxItem FontStyle="Italic" FontWeight="Bold">Bridge----------------</ListBoxItem>
                         <ListBoxItem>First Street</ListBoxItem>
                         <ListBoxItem>Last Delivery Point</ListBoxItem>
@@ -31,7 +31,6 @@
                         <ListBoxItem>First EV</ListBoxItem>
                         <ListBoxItem>First Under Bridge</ListBoxItem>
                         <ListBoxItem>First left Balcony</ListBoxItem>
-                        <ListBoxItem>Red House/Double House</ListBoxItem>
                         <ListBoxItem>Second Left Route</ListBoxItem>
                         <ListBoxItem>Last Attacker Spawn</ListBoxItem>
                         <ListBoxItem FontStyle="Italic" FontWeight="Bold">Underground---------</ListBoxItem>

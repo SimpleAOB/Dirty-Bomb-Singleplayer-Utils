@@ -573,20 +573,78 @@ namespace DBSPUtils
 
         private void SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!launching && !SCDialogOpen && ((ComboBox)sender).Name == "Maps")
+            if (sender.GetType().ToString() == "System.Windows.Controls.ComboBox")
             {
-                SingleCommand diag = new SingleCommand();
-                diag.setCommand("SwitchLevel " + Maps.SelectedItem);
-                diag.ShowDialog();
-                tConsole("Command Coppied");
-                diag = null;
-                SCDialogOpen = true;
-                Maps.SelectedIndex = 0;
-                SCDialogOpen = false;
-            }
-            else
+                if (!launching && !SCDialogOpen && ((ComboBox)sender).Name == "Maps")
+                {
+                    SingleCommand diag = new SingleCommand();
+                    diag.setCommand("SwitchLevel " + Maps.SelectedItem);
+                    diag.ShowDialog();
+                    tConsole("Command Coppied");
+                    diag = null;
+                    SCDialogOpen = true;
+                    Maps.SelectedIndex = 0;
+                    SCDialogOpen = false;
+                }
+                else
+                {
+                    _commandConstructor();
+                }
+            } 
+            else if (sender.GetType().ToString() == "System.Windows.Controls.ListBox")
             {
-                _commandConstructor();
+                if (!launching && !SCDialogOpen && ((ListBox)sender).Name == "tp_cmd")
+                {
+                    if ((tp_cmd.SelectedItem.ToString()).Contains("---") == false)
+                    {
+                        //TP Coordinate Dictionary by index
+                        Dictionary<int, string> tpcoords = new Dictionary<int, string>();
+                        tpcoords[1] = "-138 -3289 224";
+                        tpcoords[2] = "1460 763 -150";
+
+                        tpcoords[4] = "8000 19700 2000";
+                        tpcoords[5] = "6778 15473 1772";
+                        tpcoords[6] = "7618 15950 1954";
+                        tpcoords[7] = "6742 17280 1886";
+                        tpcoords[8] = "8319 20198 1687";
+
+                        tpcoords[10] = "-295 412 74";
+                        tpcoords[11] = "-127 212 -22";
+                        tpcoords[12] = "-334 902 258";
+                        tpcoords[13] = "1790 2982 -1037";
+                        tpcoords[14] = "-1974 3905 -649";
+                        tpcoords[15] = "3178 4604 -1161";
+
+                        tpcoords[17] = "-605 3954 3060";
+                        tpcoords[18] = "3723 -2867 2895";
+
+                        tpcoords[20] = "4097 186 2081";
+                        //Coord builder
+                        try
+                        {
+                            string[] t = tpcoords[tp_cmd.SelectedIndex].Split(' ');
+                            string x = t[0];
+                            string y = t[1];
+                            string z = t[2];
+                            SingleCommand diag = new SingleCommand();
+                            diag.setCommand("set SGPawn Location (x=" + x + ", y= " + y + ", z=" + z + ")");
+                            diag.ShowDialog();
+                            tConsole("Command Coppied");
+                            diag = null;
+                            SCDialogOpen = true;
+                            tp_cmd.SelectedIndex = -1;
+                            SCDialogOpen = false;
+                        }
+                        catch (KeyNotFoundException kex)
+                        {
+                            tConsole("No command found for this entry");
+                        }
+                    }
+                }
+                else
+                {
+                    _commandConstructor();
+                }
             }
         }
 

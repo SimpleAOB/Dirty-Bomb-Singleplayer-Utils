@@ -46,5 +46,10 @@ namespace DBSPUtils
         {
             cp_cmd.Text = "";
         }
+
+        private void Window_MouseLeave(object sender, MouseEventArgs e)
+        {
+            Button_Click(null, null);
+        }
     }
 }
