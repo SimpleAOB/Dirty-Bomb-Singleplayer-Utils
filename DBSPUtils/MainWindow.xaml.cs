@@ -38,6 +38,7 @@ namespace DBSPUtils
         private Dictionary<int, string> items = new Dictionary<int, string>();
         private Dictionary<int, string> maps = new Dictionary<int, string>();
         private Dictionary<string, string> map_classes = new Dictionary<string, string>();
+        private Dictionary<string, string> map_weapons = new Dictionary<string, string>();
        
         public void tConsole(Object write)
         {
@@ -276,6 +277,68 @@ namespace DBSPUtils
                     map_classes.Add(ent.Value, ent.Value);
                 }
             }
+            //Map weapons manually
+            map_weapons["AssaultRifle_01"] = "M4A1";
+            map_weapons["AssaultRifle_02"] = "BR-16";
+            map_weapons["AssaultRifle_03"] = "Dreiss AR";
+            map_weapons["AssaultRifle_04"] = "Timik-47";
+            map_weapons["AssaultRifle_07"] = "Stark AR";
+
+            map_weapons["GrenadeLauncher_01"] = "Grenade Launcher";
+            map_weapons["Grenade_01"] = "Grenade_01";
+            map_weapons["Grenade_02"] = "Grenade_02";
+
+            map_weapons["HeavyMachineGun_01"] = "Minigun";
+
+            map_weapons["CricketBat_01"] = "Cricket Bat";
+            map_weapons["Katana_01"] = "Katana";
+            map_weapons["Knife_01"] = "Beckhill Combat Knife";
+            map_weapons["Knife_02"] = "Stilnotto Stiletto";
+            map_weapons["Knife_03"] = "Kukri";
+
+            map_weapons["MachineGun_01"] = "MK46";
+            map_weapons["MachineGun_02"] = "K-121";
+
+            map_weapons["MachinePistol_01"] = "MP 400";
+            map_weapons["MachinePistol_02"] = "Silenced MP 400";
+            map_weapons["MachinePistol_03"] = "Tolen MP";
+            map_weapons["MachinePistol_04"] = "Empire-9";
+
+            map_weapons["MountedMG_01"] = "Mounted Turret";
+            map_weapons["MountedMG_02"] = "MountedMG_02";
+
+            map_weapons["Pistol_01"] = "M9";
+            map_weapons["Pistol_02"] = "Silenced M9";
+            map_weapons["Pistol_03"] = "DE .50";
+            map_weapons["Pistol_04"] = "Simeon .357";
+            map_weapons["Pistol_05"] = "Caulden";
+            map_weapons["Pistol_06"] = "Selbstadt .40";
+            map_weapons["Pistol_07"] = "Smjuth & Whetsman .40";
+
+            map_weapons["ReviveGun_01"] = "Revive Gun";
+
+            map_weapons["RocketLauncher_01"] = "Rocket Launcher";
+
+            map_weapons["Shotgun_01"] = "Hollunds 880";
+            map_weapons["Shotgun_02"] = "Remburg 7";
+            map_weapons["Shotgun_03"] = "Ahnuhld-12";
+
+            map_weapons["SniperRifle_01"] = "MOA SNPR-1";
+            map_weapons["SniperRifle_02"] = "PDP-70";
+            map_weapons["SniperRifle_03"] = "Fel-ix";
+            map_weapons["SniperRifle_04"] = "Granduer SR";
+
+            map_weapons["StickyBomb_01"] = "StickyBomb_01";
+            map_weapons["StickyMine_01"] = "StickyMine_01";
+
+            map_weapons["SubMachineGun_01"] = "SMG-9";
+            map_weapons["SubMachineGun_02"] = "Hochfir";
+            map_weapons["SubMachineGun_03"] = "KEK-10";
+            map_weapons["SubMachineGun_04"] = "Crotzni";
+            map_weapons["SubMachineGun_05"] = "Blishlok";
+
+            map_weapons["Throwableknife_01"] = "Throwableknife_01";
+            map_weapons["Tomahawk_01"] = "Tomahawk_01";
         }
 
         private void populateCombos()
@@ -309,13 +372,32 @@ namespace DBSPUtils
             {
                 try
                 {
-                    if (ent.Value.Contains('_'))
-                    {
                         Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
                         {
                         
                             tConsole("Add Maps Combobox: " + ent.Value);
                             Maps.Items.Add(ent.Value);
+                        }));
+                }
+                catch (Exception ex)
+                {
+                    tConsole(ex.Message);
+                    tConsole(ex.StackTrace);
+                }
+            }
+            if (!Properties.Settings.Default.quick_launch)
+            {
+                try
+                {
+                    var ordered = map_weapons.OrderBy(x => x.Value);
+                    foreach (KeyValuePair<string, string> ent in ordered)
+                    {
+                        Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                        {
+                            tConsole("Add Weapons Comboboxes: " + ent.Value);
+                            Primary.Items.Add(ent.Value);
+                            Secondary.Items.Add(ent.Value);
+                            Meele.Items.Add(ent.Value);
                         }));
                     }
                 }
@@ -325,25 +407,28 @@ namespace DBSPUtils
                     tConsole(ex.StackTrace);
                 }
             }
-            foreach (KeyValuePair<int, string> ent in weapons)
+            else
             {
-                try
+                foreach (KeyValuePair<int, string> ent in weapons)
                 {
-                    Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                    try
                     {
-
-                        tConsole("Add Weapons Comboboxes: " + ent.Value);
-                        Primary.Items.Add(ent.Value);
-                        Secondary.Items.Add(ent.Value);
-                        Meele.Items.Add(ent.Value);
-                    }));
-                }
-                catch (Exception ex)
-                {
-                    tConsole(ex.Message);
-                    tConsole(ex.StackTrace);
+                        Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+                        {
+                            tConsole("Add Weapons Comboboxes: " + ent.Value);
+                            Primary.Items.Add(ent.Value);
+                            Secondary.Items.Add(ent.Value);
+                            Meele.Items.Add(ent.Value);
+                        }));
+                    }
+                    catch (Exception ex)
+                    {
+                        tConsole(ex.Message);
+                        tConsole(ex.StackTrace);
+                    }
                 }
             }
+            
             foreach (KeyValuePair<int, string> ent in items)
             {
                 try
@@ -360,6 +445,10 @@ namespace DBSPUtils
                     tConsole(ex.StackTrace);
                 }
             }
+            Dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Normal, new Action(() =>
+            {
+                Maps.Items.Add("ShooterEntry");
+            }));
         }
         private void finished()
         {
@@ -419,7 +508,7 @@ namespace DBSPUtils
                 if (ItemCB.SelectedIndex != 0 && ItemCB.SelectedIndex != -1) setItem = true;
 
                 if (setMap) cmds.Add("fullcommand", "SwitchLevel " + Maps.SelectedItem);
-                else if (setInfHP) cmds.Add("fullcommand", "set SGPawn Health 9999999 | set SGPawn HealthMax 9999999");
+                else if (setInfHP) cmds.Add("fullcommand", "set SGPawn Health 9999999 | set SGPawn HealthMax 9999999 | set SGPlayerSetCooldown m_AbilityCoolDowns (m_autorate=10) | set SGCooldownComponent m_energycost (0)");
                 else
                 {
                     if (setChar)
