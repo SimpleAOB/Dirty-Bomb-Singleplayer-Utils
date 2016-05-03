@@ -712,5 +712,14 @@ namespace DBSPUtils
             tConsole("Command Coppied");
             diag = null;
         }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            SingleCommand diag = new SingleCommand();
+            diag.setCommand("set SGGameInfo Timelimit 999 | set SGGameInfo m_minplayers 1 | set SGTeamInfo respawntime 0 | set SGTeamInfo m_minimumrespawnwaittime 0");
+            diag.ShowDialog();
+            tConsole("Command Coppied");
+            diag = null;
+        }
     }
 }
