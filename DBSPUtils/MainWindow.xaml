@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="DirtyBomb Single Player Utility" Height="402" Width="525" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Loaded="Window_Loaded" Closing="Window_Closing">
     <Grid Margin="0,0,0,-48">
-        <TabControl HorizontalAlignment="Left" Height="169" VerticalAlignment="Top" Width="519">
+        <TabControl x:Name="TbCtl" HorizontalAlignment="Left" Height="169" VerticalAlignment="Top" Width="519">
             <TabItem Header="Character">
                 <Grid x:Name="char_panel" Background="#FFE5E5E5" IsEnabled="False">
                     <ComboBox x:Name="Characters" HorizontalAlignment="Left" Margin="57,14,0,0" VerticalAlignment="Top" Width="120" SelectionChanged="SelectionChanged"/>
@@ -23,7 +23,7 @@
                 <Grid x:Name="map_panel" Background="#FFE5E5E5" IsEnabled="False">
                     <ComboBox x:Name="Maps" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" SelectionChanged="SelectionChanged" Margin="53,14,0,0"/>
                     <Label Content="Map" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-                    <ListBox x:Name="tp_cmd" HorizontalAlignment="Left" Height="117" Margin="332,10,0,0" VerticalAlignment="Top" Width="167" SelectionChanged="SelectionChanged">
+                    <ListBox x:Name="tp_cmd" HorizontalAlignment="Left" Height="117" Margin="332,10,0,0" VerticalAlignment="Top" Width="167" SelectionChanged="SelectionChanged" Cursor="Hand">
                         <ListBoxItem FontStyle="Italic" FontWeight="Bold">Bridge----------------</ListBoxItem>
                         <ListBoxItem>First Street</ListBoxItem>
                         <ListBoxItem>Last Delivery Point</ListBoxItem>
@@ -48,6 +48,13 @@
                     </ListBox>
                     <Label Content="Teleport" HorizontalAlignment="Left" Margin="273,10,0,0" VerticalAlignment="Top"/>
                     <Button Content="Start Match" HorizontalAlignment="Left" Margin="10,45,0,0" VerticalAlignment="Top" Width="167" Click="Button_Click_1"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="World">
+                <Grid x:Name="world_panel" Background="#FFE5E5E5" IsEnabled="False">
+                    <Label Content="Record tutorial for the newbies" HorizontalAlignment="Left" Margin="164,57,0,0" VerticalAlignment="Top"/>
+                    <CheckBox x:Name="gspeed" Content="Gamespeed" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="gspeed_Click"/>
+                    <TextBox x:Name="gstextbox" HorizontalAlignment="Left" Height="23" Margin="95,7,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="40" TextAlignment="Center" IsEnabled="False" KeyDown="gstextbox_KeyDown" MaxLines="1" MaxLength="4" KeyUp="gstextbox_KeyUp"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Options">

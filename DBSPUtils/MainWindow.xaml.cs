@@ -4,19 +4,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using System.Linq;
 
 namespace DBSPUtils
 {
@@ -32,6 +25,8 @@ namespace DBSPUtils
         }
         public bool launching = true;
         private bool SCDialogOpen = false;
+        private bool buildingCommand = false;
+        public bool canBuild = false;
         private String consoleLastMsg = "";
         private Dictionary<int, string> classes = new Dictionary<int, string>();
 
@@ -136,7 +131,7 @@ namespace DBSPUtils
             else
             {
                 tConsole("Steam folder not found");
-                string sMessageBoxText = "Do you wish to manually select the Steam location?";
+                string sMessageBoxText = @"Do you wish to manually select the Steam location? (For example: C:\Program Files (x86)\Steam)";
                 string sCaption = "Steam Folder Not Found";
 
                 MessageBoxButton btnMessageBox = MessageBoxButton.YesNo;
@@ -461,6 +456,7 @@ namespace DBSPUtils
                 char_panel.IsEnabled = true;
                 map_panel.IsEnabled = true;
                 opt_panel.IsEnabled = true;
+                world_panel.IsEnabled = true;
                 Characters.SelectedIndex = 0;
                 Maps.SelectedIndex = 0;
                 Primary.SelectedIndex = 0;
@@ -478,76 +474,132 @@ namespace DBSPUtils
         }
         private void cleanUp()
         {
-            tConsole("Running Clean Up");
-            if (Directory.Exists("temp")) Directory.Delete("temp", true);
-            tConsole("Clean Up successful");
+            try
+            {
+                tConsole("Waiting for Clean Up");
+                if (Directory.Exists("temp")) Directory.Delete("temp", true);
+                tConsole("Clean Up successful");
+            }
+            catch (Exception ex)
+            {
+                tConsole("Clean Up Unsuccessful at " + Directory.GetCurrentDirectory() + "\\temp\\");
+            }
         }
 
         private void _commandConstructor(bool refresh = true)
         {
-            char_panel.IsEnabled = false;
-            map_panel.IsEnabled = false;
-            opt_panel.IsEnabled = false;
+            if (!launching) {
+                buildingCommand = true;
 
-            Dictionary<string, string> cmds = new Dictionary<string, string>();
+                char_panel.IsEnabled = false;
+                map_panel.IsEnabled = false;
+                world_panel.IsEnabled = false;
+                opt_panel.IsEnabled = false;
 
-            bool suicide = false;
-            bool setChar = false;
-            bool setPrimary = false;
-            bool setSecondary = false;
-            bool setMeele = false;
-            bool setItem = false;
+                Dictionary<string, string> cmds = new Dictionary<string, string>();
 
-            if (refresh)
-            {
-                if ((bool)sui_com.IsChecked) suicide = true;
-                if (Characters.SelectedIndex != 0 && Characters.SelectedIndex != -1) setChar = true;
-                if (Primary.SelectedIndex != 0 && Primary.SelectedIndex != -1) setPrimary = true;
-                if (Secondary.SelectedIndex != 0 && Secondary.SelectedIndex != -1) setSecondary = true;
-                if (Meele.SelectedIndex != 0 && Meele.SelectedIndex != -1) setMeele = true;
-                if (ItemCB.SelectedIndex != 0 && ItemCB.SelectedIndex != -1) setItem = true;
+                bool suicide = false;
+                bool setChar = false;
+                bool setPrimary = false;
+                bool setSecondary = false;
+                bool setMeele = false;
+                bool setItem = false;
 
-                if (setChar)
+                if (refresh)
                 {
-                    string chrName = Characters.SelectedItem.ToString();
-                    string chrFile = map_classes[chrName];
-                    cmds.Add("charcmd", "set SGPlayerReplicationInfo m_SlotArcheTypes "+ chrFile +"_Gameplay.Pawns.A_"+chrFile);
-                } else cmds.Add("charcmd", "noset");
-                if (!Properties.Settings.Default.quick_launch && !launching)
-                {
-                    //map_weapons.FirstOrDefault(x => x.Value == Primary.SelectedItem.ToString()).Key
-                    cmds.Add("primarycmd", setPrimary == true ? "set SGPawn PrimaryWeapons (A_" + map_weapons.FirstOrDefault(x => x.Value == Primary.SelectedItem.ToString()).Key + ")" : "noset");
-                    cmds.Add("secondarycmd", setSecondary == true ? "set SGPawn SecondaryWeapons (A_" + map_weapons.FirstOrDefault(x => x.Value == Secondary.SelectedItem.ToString()).Key + ")" : "noset");
-                    cmds.Add("meelecmd", setMeele == true ? "set SGPawn MeleeWeapons (A_" + map_weapons.FirstOrDefault(x => x.Value == Meele.SelectedItem.ToString()).Key + ")" : "noset");
-                    cmds.Add("itemcmd", setItem == true ? "set SGPawn Items (A_" + map_weapons.FirstOrDefault(x => x.Value == ItemCB.SelectedItem.ToString()).Key + ")" : "noset");
+                    if (TbCtl.SelectedIndex == 0)
+                    {
+                        if ((bool)sui_com.IsChecked) suicide = true;
+                        if (Characters.SelectedIndex != 0 && Characters.SelectedIndex != -1) setChar = true;
+                        if (Primary.SelectedIndex != 0 && Primary.SelectedIndex != -1) setPrimary = true;
+                        if (Secondary.SelectedIndex != 0 && Secondary.SelectedIndex != -1) setSecondary = true;
+                        if (Meele.SelectedIndex != 0 && Meele.SelectedIndex != -1) setMeele = true;
+                        if (ItemCB.SelectedIndex != 0 && ItemCB.SelectedIndex != -1) setItem = true;
+
+                        if (setChar)
+                        {
+                            string chrName = Characters.SelectedItem.ToString();
+                            string chrFile = map_classes[chrName];
+                            cmds.Add("charcmd", "set SGPlayerReplicationInfo m_SlotArcheTypes " + chrFile + "_Gameplay.Pawns.A_" + chrFile);
+                        }
+                        else cmds.Add("charcmd", "noset");
+                        if (!Properties.Settings.Default.quick_launch && !launching)
+                        {
+                            cmds.Add("primarycmd", setPrimary == true ? "set SGPawn PrimaryWeapons (A_" + map_weapons.FirstOrDefault(x => x.Value == Primary.SelectedItem.ToString()).Key + ")" : "noset");
+                            cmds.Add("secondarycmd", setSecondary == true ? "set SGPawn SecondaryWeapons (A_" + map_weapons.FirstOrDefault(x => x.Value == Secondary.SelectedItem.ToString()).Key + ")" : "noset");
+                            cmds.Add("meelecmd", setMeele == true ? "set SGPawn MeleeWeapons (A_" + map_weapons.FirstOrDefault(x => x.Value == Meele.SelectedItem.ToString()).Key + ")" : "noset");
+                            cmds.Add("itemcmd", setItem == true ? "set SGPawn Items (A_" + ItemCB.SelectedItem + ")" : "noset");
+                        }
+                        else
+                        {
+                            cmds.Add("primarycmd", setPrimary == true ? "set SGPawn PrimaryWeapons (A_" + Primary.SelectedItem + ")" : "noset");
+                            cmds.Add("secondarycmd", setSecondary == true ? "set SGPawn SecondaryWeapons (A_" + Secondary.SelectedItem + ")" : "noset");
+                            cmds.Add("meelecmd", setMeele == true ? "set SGPawn MeleeWeapons (A_" + Meele.SelectedItem + ")" : "noset");
+                            cmds.Add("itemcmd", setItem == true ? "set SGPawn Items (A_" + ItemCB.SelectedItem + ")" : "noset");
+                        }
+
+                        //Build fullcommand
+                        string fc = "";
+                        //One-liner for maximum unreadability
+                        foreach (KeyValuePair<string, string> ent in cmds) if (ent.Value != "noset") if (fc != "") fc += " | " + ent.Value; else fc = ent.Value;
+                        if (suicide && fc != "") fc += " | Kill";
+                        cmds["fullcommand"] = fc;
+                        commandBuilder.Text = cmds["fullcommand"];
+                    }
+                    else if (TbCtl.SelectedIndex == 2)
+                    {
+                        bool setGs = (bool) gspeed.IsChecked;
+                        bool gsTb = gstextbox.GetLineLength(0) > 0 ? gsTb = true : gsTb = false;
+                        string fc = "";
+                        cmds.Add("gamespeed", setGs == true && gsTb == true ? "set SGGameInfo Gamespeed " + gstextbox.Text : "noset"); 
+
+                        foreach (KeyValuePair<string, string> ent in cmds) if (ent.Value != "noset") if (fc != "") fc += " | " + ent.Value; else fc = ent.Value;
+                        cmds["fullcommand"] = fc;
+                        commandBuilder.Text = cmds["fullcommand"];
+                    }
                 }
-                else
-                {
-                    cmds.Add("primarycmd", setPrimary == true ? "set SGPawn PrimaryWeapons (A_" + Primary.SelectedItem + ")" : "noset");
-                    cmds.Add("secondarycmd", setSecondary == true ? "set SGPawn SecondaryWeapons (A_" + Secondary.SelectedItem + ")" : "noset");
-                    cmds.Add("meelecmd", setMeele == true ? "set SGPawn MeleeWeapons (A_" + Meele.SelectedItem + ")" : "noset");
-                    cmds.Add("itemcmd", setItem == true ? "set SGPawn Items (A_" + ItemCB.SelectedItem + ")" : "noset");
-                }
 
-                //Build fullcommand
-                string fc = "";
-                //One-liner for maximum unreadability
-                foreach (KeyValuePair<string, string> ent in cmds) if (ent.Value != "noset") if (fc != "") fc += " | " + ent.Value; else fc = ent.Value;
-                if (suicide && fc != "") fc += " | Kill";
-                cmds["fullcommand"] = fc;
-                commandBuilder.Text = cmds["fullcommand"];
+                char_panel.IsEnabled = true;
+                map_panel.IsEnabled = true;
+                world_panel.IsEnabled = true;
+                opt_panel.IsEnabled = true;
+
+                buildingCommand = false;
             }
-
-            char_panel.IsEnabled = true;
-            map_panel.IsEnabled = true;
-            opt_panel.IsEnabled = true;
-
-            commandBuilder.Focus();
-            commandBuilder.SelectAll();
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            if (Debugger.IsAttached == false)
+            {
+                using (var uc = new UpdateCheckCS.UpdateCheck())
+                {
+                    if (uc.tryCheck("1.0.4.0", 0, "na"))
+                    {
+                        if (!uc.latest())
+                        {
+                            string sMessageBoxText = "A newer version of DBSPU has been released. Would you like to download now?";
+                            string sCaption = "Update";
+
+                            MessageBoxButton btnMessageBox = MessageBoxButton.YesNo;
+                            MessageBoxImage icnMessageBox = MessageBoxImage.Exclamation;
+
+                            MessageBoxResult rsltMessageBox = MessageBox.Show(sMessageBoxText, sCaption, btnMessageBox, icnMessageBox);
+
+                            switch (rsltMessageBox)
+                            {
+                                case MessageBoxResult.Yes:
+                                    Process.Start("https://www.reddit.com/r/Dirtybomb/comments/4hk46q/dirtybomb_single_player_utilities/");
+                                    break;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                tConsole("Developer mode, update skipped. Don't forget to update master version record");
+            }
             WriteResources();
             bool dbFilesFound = false;
             for (var i = 1; i < 4; i++)
@@ -712,6 +764,15 @@ namespace DBSPUtils
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             cleanUp();
+            if (Debugger.IsAttached)
+            {
+                try
+                {
+                    Process.Start(@"C:\Users\" + Environment.UserName + @"\Documents\Visual Studio 2013\Projects\DBSPUtils\DBSPUtils\buildversion.txt");
+                } catch (Exception ex) {
+
+                }
+            }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -730,6 +791,32 @@ namespace DBSPUtils
             diag.ShowDialog();
             tConsole("Command Coppied");
             diag = null;
+        }
+
+        private void gspeed_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)gspeed.IsChecked) gstextbox.IsEnabled = true; else gstextbox.IsEnabled = false;
+            _commandConstructor();
+        }
+
+        private void gstextbox_KeyDown(object sender, KeyEventArgs e)
+        {
+            var k = e.Key;
+            if (k == Key.D1 || k == Key.D2 || k == Key.D3 || k == Key.D4 || k == Key.D5 || k == Key.D6 || k == Key.D7 || k == Key.D8 || k == Key.D9 || k == Key.D0)
+            {
+                canBuild = true;
+            }
+            else
+            {
+                e.Handled = true;
+                return;
+            }
+        }
+
+        private void gstextbox_KeyUp(object sender, KeyEventArgs e)
+        {
+            _commandConstructor();
+            canBuild = false;
         }
     }
 }
