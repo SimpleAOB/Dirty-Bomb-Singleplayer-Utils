@@ -25,7 +25,7 @@ namespace DBSPUtils.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files (x86)\\Steam")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files (x86)\\Steam\\SteamApps\\common\\Dirty Bomb")]
         public string steam_path {
             get {
                 return ((string)(this["steam_path"]));

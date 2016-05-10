@@ -111,11 +111,11 @@ namespace DBSPUtils
             //Can change using settings in app
             var sp = Properties.Settings.Default.steam_path;
             tConsole("Testing for Steam folder. Looking for 'SteamApps\\common'");
-            if (Directory.Exists(sp + @"\SteamApps\common"))
+            if (Directory.Exists(sp + @"\ShooterGame"))
             {
                 tConsole("Steam folder found. Testing for Dirty Bomb files");
                 //Test using Engineer_01 because I am biased
-                var tl = @"\SteamApps\common\Dirty Bomb\ShooterGame\CookedPC\Characters\Engineer_01";
+                var tl = @"\ShooterGame\CookedPC\Characters\Engineer_01";
                 if (Directory.Exists(sp + tl))
                 {
                     tConsole("Game files found");
@@ -149,9 +149,6 @@ namespace DBSPUtils
                         Properties.Settings.Default.Save();
                         tConsole("Selected folder: " + Properties.Settings.Default.steam_path);
                         break;
-
-                    case MessageBoxResult.No:
-                        break;
                 }
                 return false;
             }
@@ -164,7 +161,7 @@ namespace DBSPUtils
                 commandBuilder.Text = "Building Internal Database...1/2";
             }));
             var i = 0;
-            foreach (string d in Directory.GetDirectories(Properties.Settings.Default.steam_path + @"\SteamApps\common\Dirty Bomb\ShooterGame\CookedPC\Characters"))
+            foreach (string d in Directory.GetDirectories(Properties.Settings.Default.steam_path + @"\ShooterGame\CookedPC\Characters"))
             {
                 var chr = d.Substring(d.LastIndexOf('\\') + 1);
                 tConsole("Character: " + chr);
@@ -172,7 +169,7 @@ namespace DBSPUtils
                 i++;
             }
             i = 0;
-            foreach (string d in Directory.GetDirectories(Properties.Settings.Default.steam_path + @"\SteamApps\common\Dirty Bomb\ShooterGame\CookedPC\Weapons"))
+            foreach (string d in Directory.GetDirectories(Properties.Settings.Default.steam_path + @"\ShooterGame\CookedPC\Weapons"))
             {
                 var wep = d.Substring(d.LastIndexOf('\\') + 1);
                 tConsole("Weapon: " + wep);
@@ -180,7 +177,7 @@ namespace DBSPUtils
                 i++;
             }
             i = 0;
-            foreach (string d in Directory.GetDirectories(Properties.Settings.Default.steam_path + @"\SteamApps\common\Dirty Bomb\ShooterGame\CookedPC\Items"))
+            foreach (string d in Directory.GetDirectories(Properties.Settings.Default.steam_path + @"\ShooterGame\CookedPC\Items"))
             {
                 var item = d.Substring(d.LastIndexOf('\\') + 1);
                 tConsole("Item: " + item);
@@ -188,7 +185,7 @@ namespace DBSPUtils
                 i++;
             }
             i = 0;
-            foreach (string d in Directory.GetDirectories(Properties.Settings.Default.steam_path + @"\SteamApps\common\Dirty Bomb\ShooterGame\CookedPC\Maps"))
+            foreach (string d in Directory.GetDirectories(Properties.Settings.Default.steam_path + @"\ShooterGame\CookedPC\Maps"))
             {
                 var map = d.Substring(d.LastIndexOf('\\') + 1);
                 tConsole("Map: " + map);
@@ -211,14 +208,14 @@ namespace DBSPUtils
                 {
                     try
                     {
-                        var loc1 = Properties.Settings.Default.steam_path + @"\SteamApps\common\Dirty Bomb\ShooterGame\CookedPC\Characters\" + ent.Value + "\\" + ent.Value + "_Frontend_SF.upk";
+                        var loc1 = Properties.Settings.Default.steam_path + @"\ShooterGame\CookedPC\Characters\" + ent.Value + "\\" + ent.Value + "_Frontend_SF.upk";
                         var loc2 = "temp\\" + ent.Value + @"_Frontend_SF.upk";
                         var dirLoc1 = ent.Value + "_Frontend_SF";
                         var dirLoc2 = "temp\\" + ent.Value + "_Frontend_SF";
                         var ntloc1 = @"temp\" + ent.Value + @"_Frontend_SF\NameTable.txt";
                         if (ent.Value == "Engineer_01")
                         {
-                            loc1 = Properties.Settings.Default.steam_path + @"\SteamApps\common\Dirty Bomb\ShooterGame\CookedPC\Characters\" + ent.Value + "\\" + "E01_Frontend_SF.upk";
+                            loc1 = Properties.Settings.Default.steam_path + @"\ShooterGame\CookedPC\Characters\" + ent.Value + "\\" + "E01_Frontend_SF.upk";
                             loc2 = "temp\\E01_Frontend_SF.upk";
                             dirLoc1 = "E01_Frontend_SF";
                             dirLoc2 = "temp\\E01_Frontend_SF";
@@ -549,9 +546,12 @@ namespace DBSPUtils
                     else if (TbCtl.SelectedIndex == 2)
                     {
                         bool setGs = (bool) gspeed.IsChecked;
+                        bool setGr = (bool) gravity.IsChecked;
                         bool gsTb = gstextbox.GetLineLength(0) > 0 ? gsTb = true : gsTb = false;
+                        bool grTb = gravitytb.GetLineLength(0) > 0 ? grTb = true : grTb = false;
                         string fc = "";
-                        cmds.Add("gamespeed", setGs == true && gsTb == true ? "set SGGameInfo Gamespeed " + gstextbox.Text : "noset"); 
+                        cmds.Add("gamespeed", setGs == true && gsTb == true ? "set SGGameInfo Gamespeed " + gstextbox.Text : "noset");
+                        cmds.Add("gravity", setGr == true && gsTb == true ? "set SGWorldInfo worldgravityz " + gravitytb.Text : "noset");
 
                         foreach (KeyValuePair<string, string> ent in cmds) if (ent.Value != "noset") if (fc != "") fc += " | " + ent.Value; else fc = ent.Value;
                         cmds["fullcommand"] = fc;
@@ -770,7 +770,7 @@ namespace DBSPUtils
                 {
                     Process.Start(@"C:\Users\" + Environment.UserName + @"\Documents\Visual Studio 2013\Projects\DBSPUtils\DBSPUtils\buildversion.txt");
                 } catch (Exception ex) {
-
+                    Console.WriteLine(ex.Message);
                 }
             }
         }
@@ -802,7 +802,9 @@ namespace DBSPUtils
         private void gstextbox_KeyDown(object sender, KeyEventArgs e)
         {
             var k = e.Key;
-            if (k == Key.D1 || k == Key.D2 || k == Key.D3 || k == Key.D4 || k == Key.D5 || k == Key.D6 || k == Key.D7 || k == Key.D8 || k == Key.D9 || k == Key.D0)
+            if (k == Key.D1 || k == Key.D2 || k == Key.D3 || k == Key.D4 || k == Key.D5 || k == Key.D6 || k == Key.D7 || k == Key.D8 || k == Key.D9 || k == Key.D0 ||
+                k == Key.NumPad0 || k == Key.NumPad1 || k == Key.NumPad2 || k == Key.NumPad3 || k == Key.NumPad4 || k == Key.NumPad5 || k == Key.NumPad6 || k == Key.NumPad7 || k == Key.NumPad8 || k == Key.NumPad9 ||
+                k == Key.OemMinus)
             {
                 canBuild = true;
             }
@@ -817,6 +819,19 @@ namespace DBSPUtils
         {
             _commandConstructor();
             canBuild = false;
+        }
+
+        private void gravity_Click(object sender, RoutedEventArgs e)
+        {
+            if ((bool)gravity.IsChecked) gravitytb.IsEnabled = true; else gravitytb.IsEnabled = false;
+            _commandConstructor();
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            gstextbox.Text = "1";
+            gravitytb.Text = "-750";
+            _commandConstructor();
         }
     }
 }

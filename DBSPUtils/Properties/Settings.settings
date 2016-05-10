@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="steam_path" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Program Files (x86)\Steam</Value>
+      <Value Profile="(Default)">C:\Program Files (x86)\Steam\SteamApps\common\Dirty Bomb</Value>
     </Setting>
     <Setting Name="quick_launch" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

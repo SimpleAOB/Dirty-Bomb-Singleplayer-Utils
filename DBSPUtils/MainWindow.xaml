@@ -55,6 +55,9 @@
                     <Label Content="Record tutorial for the newbies" HorizontalAlignment="Left" Margin="164,57,0,0" VerticalAlignment="Top"/>
                     <CheckBox x:Name="gspeed" Content="Gamespeed" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Click="gspeed_Click"/>
                     <TextBox x:Name="gstextbox" HorizontalAlignment="Left" Height="23" Margin="95,7,0,0" TextWrapping="Wrap" Text="1" VerticalAlignment="Top" Width="40" TextAlignment="Center" IsEnabled="False" KeyDown="gstextbox_KeyDown" MaxLines="1" MaxLength="4" KeyUp="gstextbox_KeyUp"/>
+                    <CheckBox x:Name="gravity" Content="Gravity" HorizontalAlignment="Left" Margin="10,38,0,0" VerticalAlignment="Top" Click="gravity_Click"/>
+                    <TextBox x:Name="gravitytb" HorizontalAlignment="Left" Height="23" Margin="95,35,0,0" TextWrapping="Wrap" Text="-750" VerticalAlignment="Top" Width="40" TextAlignment="Center" IsEnabled="False" KeyDown="gstextbox_KeyDown" MaxLines="1" MaxLength="4" KeyUp="gstextbox_KeyUp"/>
+                    <Button Content="Defaults" HorizontalAlignment="Left" Margin="419,105,0,0" VerticalAlignment="Top" Width="80" Click="Button_Click_2"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Options">
