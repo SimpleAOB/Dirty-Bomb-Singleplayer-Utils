@@ -30,23 +30,19 @@ namespace UpdateCheckCS
             // Make request to software server
             try
             {
-                WebRequest getVersion = WebRequest.Create(versionStringBase);
-                using (Stream responseVersion = getVersion.GetResponse().GetResponseStream())
+                using (var client = new WebClient())
                 {
-                    using (StreamReader responseStream = new StreamReader(responseVersion))
+                    string webver = client.DownloadString(versionStringBase);
+                    if (currentVersion != webver)
                     {
-                        string webver = responseStream.ReadToEnd().ToString(); ;
-                        if (currentVersion != webver)
-                        {
-                            successString = "New version found";
-                            latestBool = false;
-                            return true;
-                        }
-                        else
-                        {
-                            successString = "Latest version";
-                            return true;
-                        }
+                        successString = "New version found";
+                        latestBool = false;
+                        return true;
+                    }
+                    else
+                    {
+                        successString = "Latest version";
+                        return true;
                     }
                 }
             }

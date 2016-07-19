@@ -54,6 +54,9 @@
   <PropertyGroup>
     <ApplicationIcon>DBSP1.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <RunPostBuildEvent>Always</RunPostBuildEvent>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.WindowsAPICodePack.Core.1.1.0\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
@@ -173,7 +176,7 @@
     <Error Condition="!Exists('..\packages\Fody.1.28.3\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.28.3\build\Fody.targets'))" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>cmd /c "C:\Users\Win7-Gaming\Documents\Visual Studio 2013\Projects\BuildVersion\BuildVersion\bin\Debug\BuildVersion.exe"</PostBuildEvent>
+    <PostBuildEvent>cmd /c "C:\Users\Win7-Gaming\Documents\Visual Studio 2013\Projects\DBSPUtils\DBSPUtils\BuildVersion.exe "</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

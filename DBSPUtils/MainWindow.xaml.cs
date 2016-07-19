@@ -166,6 +166,7 @@ namespace DBSPUtils
                 var chr = d.Substring(d.LastIndexOf('\\') + 1);
                 tConsole("Character: " + chr);
                 classes.Add(i, chr);
+                
                 i++;
             }
             i = 0;
@@ -574,7 +575,7 @@ namespace DBSPUtils
             {
                 using (var uc = new UpdateCheckCS.UpdateCheck())
                 {
-                    if (uc.tryCheck("1.0.4.0", 0, "na"))
+                    if (uc.tryCheck("1.0.5.0", 0, "na"))
                     {
                         if (!uc.latest())
                         {
